@@ -6,4 +6,4 @@
 pkill -f "serena start-mcp-server" 2>/dev/null || true
 sleep 1
 
-nohup serena start-mcp-server --context=codex --project-from-cwd > /tmp/serena_start.log 2>&1 &
+tmux new-session -d -s mcp-serena 'serena start-mcp-server --context=codex --project-from-cwd > /tmp/serena_start.log 2>&1'
