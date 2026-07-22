@@ -21,6 +21,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.photosorter.util.Config;
+
 /**
  * Main application view containing source/destination pickers, log panel, and progress controls.
  */
@@ -43,12 +45,12 @@ public class MainView extends BorderPane {
 
     public MainView() {
         setPadding(new Insets(10));
-        // BorderPane does not support spacing
 
         buildTopPanel();
         setCenter(logPanel);
         buildBottomPanel();
 
+        loadConfig();
         bindListeners();
         updateStartButtonState();
     }
@@ -113,12 +115,24 @@ public class MainView extends BorderPane {
                 errorsLabel.setText("Errors: " + val.intValue()));
     }
 
+    private void loadConfig() {
+        String src = Config.get("source");
+        if (src != null && !src.isEmpty()) {
+            sourceField.setText(src);
+        }
+        String dst = Config.get("destination");
+        if (dst != null && !dst.isEmpty()) {
+            destField.setText(dst);
+        }
+    }
+
     private void browseSource() {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Select Source Folder");
         File dir = chooser.showDialog(getScene().getWindow());
         if (dir != null) {
             sourceField.setText(dir.getAbsolutePath());
+            Config.set("source", dir.getAbsolutePath());
             updateStartButtonState();
         }
     }
@@ -129,6 +143,7 @@ public class MainView extends BorderPane {
         File dir = chooser.showDialog(getScene().getWindow());
         if (dir != null) {
             destField.setText(dir.getAbsolutePath());
+            Config.set("destination", dir.getAbsolutePath());
             updateStartButtonState();
         }
     }
@@ -194,7 +209,6 @@ public class MainView extends BorderPane {
         return new SortListener() {
             @Override
             public void onScanned(Path file) {
-                logPanel.info("Scanning: " + file.getFileName());
             }
 
             @Override

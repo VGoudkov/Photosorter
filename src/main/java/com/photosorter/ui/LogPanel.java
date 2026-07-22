@@ -144,13 +144,13 @@ public class LogPanel extends VBox {
             }
 
             Text timeText = new Text("[" + item.timestamp() + "] ");
-            timeText.setStyle("-fx-fill: #666666;");
+            timeText.setStyle("-fx-fill: #999999;");
 
             Text msgText = new Text(item.message());
             switch (item.level()) {
-                case WARN -> msgText.setStyle("-fx-fill: #d4a017;");
-                case ERROR -> msgText.setStyle("-fx-fill: #cc0000; -fx-font-weight: bold;");
-                default -> msgText.setStyle("-fx-fill: -fx-text-background-color;");
+                case WARN -> msgText.setStyle("-fx-fill: #8B6914;");
+                case ERROR -> msgText.setStyle("-fx-fill: #8B0000; -fx-font-weight: bold;");
+                default -> msgText.setStyle("-fx-fill: #333333;");
             }
 
             TextFlow flow = new TextFlow(timeText, msgText);
