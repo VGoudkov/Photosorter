@@ -22,3 +22,4 @@ desktop.ini
 # Resume
 _resume.txt
 dependency-reduced-pom.xml
+/nohup.out
