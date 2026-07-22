@@ -225,6 +225,9 @@ public class SortEngine {
         } catch (IllegalStateException e) {
             // JavaFX toolkit not initialized (e.g., in tests) — run directly
             action.run();
+        } catch (RuntimeException e) {
+            // JavaFX toolkit not initialized (e.g., headless mode with modules) — run directly
+            action.run();
         }
     }
 }

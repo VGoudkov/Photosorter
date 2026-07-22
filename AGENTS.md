@@ -19,6 +19,10 @@ No codegen, no formatter, no linter config. Just Maven.
 
 `com.photosorter.Launcher` is the main class (not `App.java`). JavaFX 11+ forbids `Application.launch()` from within a class that extends `Application` on the classpath. Launcher delegates to `App.main()`. Both `javafx-maven-plugin` and `maven-shade-plugin` reference `Launcher`.
 
+## Module Info
+
+`src/main/java/module-info.java` declares the app as a named Java module. This eliminates JavaFX's "unsupported configuration" warning and ensures proper module resolution. The shade uber-jar merges module descriptors during packaging.
+
 ## Architecture
 
 ```
