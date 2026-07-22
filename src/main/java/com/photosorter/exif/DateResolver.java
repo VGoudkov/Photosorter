@@ -10,18 +10,21 @@ import java.time.ZoneId;
 /**
  * Resolves the "date taken" for a photo file.
  * Primary: EXIF DateTimeOriginal.
+ * Secondary: file name pattern matching.
  * Fallback: file system last-modified timestamp.
  */
 public class DateResolver {
 
     private final ExifDateReader exifReader;
+    private final FileNameDateParser fileNameParser;
 
     public DateResolver() {
-        this(new ExifDateReader());
+        this(new ExifDateReader(), new FileNameDateParser());
     }
 
-    public DateResolver(ExifDateReader exifReader) {
+    public DateResolver(ExifDateReader exifReader, FileNameDateParser fileNameParser) {
         this.exifReader = exifReader;
+        this.fileNameParser = fileNameParser;
     }
 
     /**
@@ -32,8 +35,8 @@ public class DateResolver {
      * @throws IOException if the file cannot be read for fallback date
      */
     public LocalDateTime resolve(Path file) throws IOException {
-        // Try EXIF first
         return exifReader.readOriginalDate(file)
+                .or(() -> fileNameParser.parseDate(file))
                 .orElseGet(() -> getLastModified(file));
     }
 

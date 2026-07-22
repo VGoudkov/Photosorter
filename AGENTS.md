@@ -27,7 +27,7 @@ com.photosorter
 ├── App.java            # JavaFX Application subclass
 ├── ui/                 # MainView, LogPanel, ProgressModel
 ├── scanner/            # FileCollector (walk + extension filter), PhotoFile (record)
-├── exif/               # ExifDateReader (metadata-extractor), DateResolver (EXIF → lastModified → epoch)
+├── exif/               # ExifDateReader (metadata-extractor), FileNameDateParser, DateResolver (chains them)
 ├── mover/              # SortEngine (orchestrator), DuplicateChecker, ConflictResolver, SortListener, Summary
 └── util/               # AppLogger (stub, console-only currently)
 ```
@@ -36,7 +36,7 @@ Key flow: `SortEngine.execute()` runs on a **virtual thread** (`Thread.ofVirtual
 
 ## Testing
 
-- 7 test classes, JUnit 5 + AssertJ, no mocking framework
+- 8 test classes, JUnit 5 + AssertJ, no mocking framework
 - TempDir for filesystem isolation in all tests
 - `TestImageHelper.createMinimalJpeg()` / `createJpegWithExif()` for test fixtures
 - Tests run headless — no JavaFX toolkit needed (SortEngine.dispatch() falls back to direct execution when `Platform.isFxApplicationThread()` is false)
@@ -47,7 +47,8 @@ Key flow: `SortEngine.execute()` runs on a **virtual thread** (`Thread.ofVirtual
 | Aspect | Behavior |
 |--------|----------|
 | Photo extensions | jpg, jpeg, png, tiff, tif, webp, heic, heif, raw, cr2, nef, arw, dng — in `FileCollector.PHOTO_EXTENSIONS` |
-| Date resolution | EXIF DateTimeOriginal → file lastModified → epoch (1970-01-01) |
+| Date resolution | EXIF DateTimeOriginal → file name pattern → file lastModified → epoch (1970-01-01) |
+| File name patterns | Config at `src/main/resources/date-patterns.conf`, tried in order, first match wins |
 | Duplicate check | (filename, size, date truncated to seconds) all must match |
 | Conflict naming | `photo (1).jpg`, `photo (2).jpg` — before last extension dot |
 | Move strategy | `ATOMIC_MOVE` first, fallback to copy+delete for cross-device |

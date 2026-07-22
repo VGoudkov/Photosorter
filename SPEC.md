@@ -30,8 +30,9 @@ A desktop Java application that scans a source directory tree for photos, reads 
 
 ### 2.3 EXIF & Metadata Reading
 - For each recognised file the application extracts the "original date/time taken":
-  1. **Primary** — EXIF `DateTimeOriginal` tag (or format-equivalent for HEIC/raw).
-  2. **Fallback** — file system "last modified" timestamp when EXIF data is absent or unreadable.
+  1. **Primary** — EXIF `DateTimeOriginal` tag (or format-equivalent for HEIC/raw) or `DateTaken`
+  2. **Secondary** - file name pattern. The program should have a config file with date patterns which can be presented in file name
+  3. **Fallback** — file system "last modified" timestamp when EXIF data is absent or unreadable.
 - Files that are unreadable or corrupt are logged and skipped.
 
 ### 2.4 Target Folder Structure
@@ -68,6 +69,15 @@ Duplicates:
   - skipped (duplicates)
   - errors / unreadable files
 - An optional detailed log file (`photossorter-YYYY-MM-DD.log`) is written to the destination.
+
+### 2.8 Date patterns (if no EXIF or other metadata)
+- sometimes there is no EXIF data, but file pattern looks like `20160818_124425.jpg` or `2015-08-22 21.59.57.jpg`
+- the app must have a config file, where such patterns are presented in following lines
+  - YYYYMMDD_hhmmss.*
+  - YYYY-MM-DD hh.mm.ss
+  - may be MM DD YYYY hh mm
+- the app should try to parse file name as one of dates, starting from 1-st line. If one format is suitable (the valid date can be constructed - use this and don't try others
+- if no pattern can be used - then fallback to file attributes
 
 ---
 
